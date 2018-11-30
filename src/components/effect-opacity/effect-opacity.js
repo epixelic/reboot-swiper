@@ -6,7 +6,7 @@ const Opacity = {
     const { slides } = swiper;
     for (let i = 0; i < slides.length; i += 1) {
       const $slideEl = swiper.slides.eq(i);
-      const slideOpacity = 1 - Math.min(Math.abs($slideEl[0].progress), 1) + swiper.params.opacityEffect.minOpacity;
+      const slideOpacity = 1 - Math.min(Math.min(Math.abs($slideEl[0].progress), 1), 1 - swiper.params.opacityEffect.minOpacity);
       $slideEl.css({ opacity: slideOpacity });
     }
   },
