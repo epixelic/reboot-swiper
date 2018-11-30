@@ -4668,7 +4668,7 @@
       var slides = swiper.slides;
       for (var i = 0; i < slides.length; i += 1) {
         var $slideEl = swiper.slides.eq(i);
-        var slideOpacity = 1 - Math.min(Math.abs($slideEl[0].progress), 1) + swiper.params.opacityEffect.minOpacity;
+        var slideOpacity = 1 - Math.min(Math.min(Math.abs($slideEl[0].progress), 1), 1 - swiper.params.opacityEffect.minOpacity);
         $slideEl.css({ opacity: slideOpacity });
       }
     },
