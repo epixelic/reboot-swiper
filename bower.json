@@ -1,8 +1,8 @@
 {
-  "name": "swiper",
+  "name": "reboot-swiper",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nolimits4web/Swiper.git"
+    "url": "https://github.com/epixelic/reboot-swiper.git"
   },
   "description": "Most modern mobile touch slider and framework with hardware accelerated transitions",
   "version": "4.4.2",
