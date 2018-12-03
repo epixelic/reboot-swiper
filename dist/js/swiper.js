@@ -7,7 +7,7 @@
  *
  * Released under the MIT License
  *
- * Released on: November 30, 2018
+ * Released on: December 3, 2018
  */
 
 (function (global, factory) {
@@ -4668,7 +4668,14 @@
       var slides = swiper.slides;
       for (var i = 0; i < slides.length; i += 1) {
         var $slideEl = swiper.slides.eq(i);
-        var slideOpacity = 1 - Math.min(Math.min(Math.abs($slideEl[0].progress), 1), 1 - swiper.params.opacityEffect.minOpacity);
+        // linear easing function function
+        var slideOpacity = 1 - Math.min(Math.abs($slideEl[0].progress), 1) * swiper.params.opacityEffect.minOpacity;
+
+        // prevent opacity like 0.9997...
+        if (slideOpacity > 0.9995) {
+          slideOpacity = 1;
+        }
+
         $slideEl.css({ opacity: slideOpacity });
       }
     },
@@ -4702,6 +4709,7 @@
         swiper.classNames.push(((swiper.params.containerModifierClass) + "opacity"));
         var overwriteParams = {
           watchSlidesProgress: true,
+          // TODO: option to set easing function
         };
         Utils.extend(swiper.params, overwriteParams);
         Utils.extend(swiper.originalParams, overwriteParams);

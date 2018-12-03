@@ -6,7 +6,14 @@ const Opacity = {
     const { slides } = swiper;
     for (let i = 0; i < slides.length; i += 1) {
       const $slideEl = swiper.slides.eq(i);
-      const slideOpacity = 1 - Math.min(Math.min(Math.abs($slideEl[0].progress), 1), 1 - swiper.params.opacityEffect.minOpacity);
+      // linear easing function
+      let slideOpacity = 1 - Math.min(Math.abs($slideEl[0].progress), 1) * swiper.params.opacityEffect.minOpacity;
+
+      // prevent opacity like 0.9997...
+      if (slideOpacity > 0.9995) {
+        slideOpacity = 1;
+      }
+
       $slideEl.css({ opacity: slideOpacity });
     }
   },
@@ -40,6 +47,7 @@ export default {
       swiper.classNames.push(`${swiper.params.containerModifierClass}opacity`);
       const overwriteParams = {
         watchSlidesProgress: true,
+        // TODO: option to set easing function
       };
       Utils.extend(swiper.params, overwriteParams);
       Utils.extend(swiper.originalParams, overwriteParams);
