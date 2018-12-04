@@ -7,7 +7,7 @@ const Opacity = {
     for (let i = 0; i < slides.length; i += 1) {
       const $slideEl = swiper.slides.eq(i);
       // linear easing function
-      let slideOpacity = 1 - Math.min(Math.abs($slideEl[0].progress), 1) * swiper.params.opacityEffect.minOpacity;
+      let slideOpacity = 1 - Math.min(Math.abs($slideEl[0].progress), 1) * (1 - swiper.params.opacityEffect.minOpacity);
 
       // prevent opacity like 0.9997...
       if (slideOpacity > 0.9995) {
