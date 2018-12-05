@@ -1035,7 +1035,7 @@
 
   SwiperClass.prototype.on = function on (events, handler, priority) {
     var self = this;
-    if (typeof handler !== 'function') { return self; }
+    if (typeof handler !== 'function' || !events) { return self; }
     var method = priority ? 'unshift' : 'push';
     events.split(' ').forEach(function (event) {
       if (!self.eventsListeners[event]) { self.eventsListeners[event] = []; }
