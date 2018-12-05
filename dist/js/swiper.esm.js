@@ -236,7 +236,7 @@ class SwiperClass {
 
   on(events, handler, priority) {
     const self = this;
-    if (typeof handler !== 'function' || !events) return self;
+    if (typeof handler !== 'function') return self;
     const method = priority ? 'unshift' : 'push';
     events.split(' ').forEach((event) => {
       if (!self.eventsListeners[event]) self.eventsListeners[event] = [];
@@ -257,7 +257,7 @@ class SwiperClass {
 
   off(events, handler) {
     const self = this;
-    if (!self.eventsListeners || !events) return self;
+    if (!self.eventsListeners) return self;
     events.split(' ').forEach((event) => {
       if (typeof handler === 'undefined') {
         self.eventsListeners[event] = [];
