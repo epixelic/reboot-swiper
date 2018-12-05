@@ -7,7 +7,7 @@
  *
  * Released under the MIT License
  *
- * Released on: December 4, 2018
+ * Released on: December 5, 2018
  */
 
 (function (global, factory) {
@@ -1059,7 +1059,7 @@
 
   SwiperClass.prototype.off = function off (events, handler) {
     var self = this;
-    if (!self.eventsListeners) { return self; }
+    if (!self.eventsListeners || !events) { return self; }
     events.split(' ').forEach(function (event) {
       if (typeof handler === 'undefined') {
         self.eventsListeners[event] = [];

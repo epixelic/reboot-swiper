@@ -38,7 +38,7 @@ class SwiperClass {
 
   off(events, handler) {
     const self = this;
-    if (!self.eventsListeners) return self;
+    if (!self.eventsListeners || !events) return self;
     events.split(' ').forEach((event) => {
       if (typeof handler === 'undefined') {
         self.eventsListeners[event] = [];

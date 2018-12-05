@@ -7,7 +7,7 @@
  *
  * Released under the MIT License
  *
- * Released on: December 4, 2018
+ * Released on: December 5, 2018
  */
 
 import { $, addClass, removeClass, hasClass, toggleClass, attr, removeAttr, data, transform, transition, on, off, trigger, transitionEnd, outerWidth, outerHeight, offset, css, each, html, text, is, index, eq, append, prepend, next, nextAll, prev, prevAll, parent, parents, closest, find, children, remove, add, styles } from 'dom7/dist/dom7.modular';
@@ -257,7 +257,7 @@ class SwiperClass {
 
   off(events, handler) {
     const self = this;
-    if (!self.eventsListeners) return self;
+    if (!self.eventsListeners || !events) return self;
     events.split(' ').forEach((event) => {
       if (typeof handler === 'undefined') {
         self.eventsListeners[event] = [];
