@@ -7,7 +7,25 @@
     <meta name="viewport" content="width=device-width">
 </head>
 <body>
-    <div class="swiper-container">
+    <div id="first" class="swiper-container">
+        <div class="swiper-scrollbar"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">Slide 1</div>
+            <div class="swiper-slide">Slide 2</div>
+            <div class="swiper-slide">Slide 3</div>
+            <div class="swiper-slide">Slide 4</div>
+            <div class="swiper-slide">Slide 5</div>
+            <div class="swiper-slide">Slide 6</div>
+            <div class="swiper-slide">Slide 7</div>
+            <div class="swiper-slide">Slide 8</div>
+            <div class="swiper-slide">Slide 9</div>
+            <div class="swiper-slide">Slide 10</div>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    <div id="second" class="swiper-container">
         <div class="swiper-scrollbar"></div>
         <div class="swiper-button-prev"></div>
         <div class="swiper-button-next"></div>
@@ -46,8 +64,8 @@
     </style>
     <script src="../build/js/swiper.js"></script>
     <script>
-        var swiper = new Swiper({
-            el: '.swiper-container',
+        new Swiper({
+            el: '#first',
             loop: true,
             slidesPerView: 3,
             centeredSlides: true,
@@ -65,6 +83,28 @@
             opacityEffect: {
                 minOpacity: 0.2
             }
+        });
+        new Swiper({
+          el: '#second',
+          loop: true,
+          slidesPerView: 6,
+          spaceBetween: 20,
+          centeredSlides: false,
+          slideToClickedSlide: true,
+          grabCursor: false,
+          speed: 300,
+          keyboard: {
+            enabled: true,
+          },
+          autoplay: {
+            delay: 1000,
+            disableOnInteraction: false,
+            pauseOnMouseHover: true
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
         });
     </script>
 </body>

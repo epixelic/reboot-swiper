@@ -10,7 +10,9 @@ const Autoplay = {
       delay = $activeSlideEl.attr('data-swiper-autoplay') || swiper.params.autoplay.delay;
     }
     swiper.autoplay.timeout = Utils.nextTick(() => {
-      if (swiper.params.autoplay.reverseDirection) {
+      if (swiper.params.autoplay.pauseOnMouseHover && swiper.$el[0].parentElement.querySelector(':hover') === swiper.$el[0]) {
+        swiper.autoplay.run();
+      } else if (swiper.params.autoplay.reverseDirection) {
         if (swiper.params.loop) {
           swiper.loopFix();
           swiper.slidePrev(swiper.params.speed, true, true);
@@ -87,6 +89,7 @@ export default {
       disableOnInteraction: true,
       stopOnLastSlide: false,
       reverseDirection: false,
+      pauseOnMouseHover: false,
     },
   },
   create() {
