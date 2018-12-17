@@ -28,7 +28,11 @@ const Autoplay = {
         }
       } else if (swiper.params.loop) {
         swiper.loopFix();
-        swiper.slideNext(swiper.params.speed, true, true);
+        if (swiper.params.autoplay.slideView) {
+          swiper.slideNextView(swiper.params.speed, true, true);
+        } else {
+          swiper.slideNext(swiper.params.speed, true, true);
+        }
         swiper.emit('autoplay');
       } else if (!swiper.isEnd) {
         swiper.slideNext(swiper.params.speed, true, true);
@@ -90,6 +94,7 @@ export default {
       stopOnLastSlide: false,
       reverseDirection: false,
       pauseOnMouseHover: false,
+      slideView: false,
     },
   },
   create() {

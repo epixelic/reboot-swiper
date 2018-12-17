@@ -5,6 +5,11 @@ import Utils from '../../utils/utils';
 const Keyboard = {
   handle(event) {
     const swiper = this;
+
+    if (swiper.params.keyboard.onlyOnMouseHover && swiper.$el[0].parentElement.querySelector(':hover') !== swiper.$el[0]) {
+      return;
+    }
+
     const { rtlTranslate: rtl } = swiper;
     let e = event;
     if (e.originalEvent) e = e.originalEvent; // jquery fix
@@ -54,8 +59,20 @@ const Keyboard = {
         if (e.preventDefault) e.preventDefault();
         else e.returnValue = false;
       }
-      if ((kc === 39 && !rtl) || (kc === 37 && rtl)) swiper.slideNext();
-      if ((kc === 37 && !rtl) || (kc === 39 && rtl)) swiper.slidePrev();
+      if ((kc === 39 && !rtl) || (kc === 37 && rtl)){
+        if(swiper.params.keyboard.slideView){
+          swiper.slideNextView();
+        }else{
+          swiper.slideNext();
+        }
+      }
+      if ((kc === 37 && !rtl) || (kc === 39 && rtl)){
+        if(swiper.params.keyboard.slideView){
+          swiper.slidePrevView();
+        }else{
+          swiper.slidePrev();
+        }
+      }
     } else {
       if (kc === 38 || kc === 40) {
         if (e.preventDefault) e.preventDefault();
@@ -97,6 +114,8 @@ export default {
         enable: Keyboard.enable.bind(swiper),
         disable: Keyboard.disable.bind(swiper),
         handle: Keyboard.handle.bind(swiper),
+        slideView: true,
+        onlyOnMouseHover: false,
       },
     });
   },

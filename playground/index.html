@@ -84,7 +84,7 @@
                 minOpacity: 0.2
             }
         });
-        new Swiper({
+        window.sInstance = new Swiper({
           el: '#second',
           loop: true,
           slidesPerView: 6,
@@ -93,17 +93,22 @@
           slideToClickedSlide: true,
           grabCursor: false,
           speed: 300,
+          watchOverflow: true,
           keyboard: {
             enabled: true,
+            slideView: true,
+            onlyOnMouseHover: true
           },
           autoplay: {
-            delay: 1000,
+            delay: 5000,
             disableOnInteraction: false,
-            pauseOnMouseHover: true
+            pauseOnMouseHover: true,
+            slideView: true
           },
           navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
+            slideView: true
           },
         });
     </script>

@@ -1,9 +1,11 @@
 import Support from '../../../utils/support';
 
 export default function (index = 0, speed = this.params.speed, runCallbacks = true, internal) {
+
   const swiper = this;
   let slideIndex = index;
   if (slideIndex < 0) slideIndex = 0;
+
 
   const {
     params, snapGrid, slidesGrid, previousIndex, activeIndex, rtlTranslate: rtl,
@@ -19,7 +21,9 @@ export default function (index = 0, speed = this.params.speed, runCallbacks = tr
     swiper.emit('beforeSlideChangeStart');
   }
 
+
   const translate = -snapGrid[snapIndex];
+
 
   // Update progress
   swiper.updateProgress(translate);
@@ -32,6 +36,8 @@ export default function (index = 0, speed = this.params.speed, runCallbacks = tr
       }
     }
   }
+
+
   // Directions locks
   if (swiper.initialized && slideIndex !== activeIndex) {
     if (!swiper.allowSlideNext && translate < swiper.translate && translate < swiper.minTranslate()) {

@@ -29,15 +29,25 @@ const Navigation = {
   },
   onPrevClick(e) {
     const swiper = this;
+    const params = swiper.params.navigation;
     e.preventDefault();
     if (swiper.isBeginning && !swiper.params.loop) return;
-    swiper.slidePrev();
+    if(params.slideView){
+      swiper.slidePrevView();
+    }else{
+      swiper.slidePrev();
+    }
   },
   onNextClick(e) {
     const swiper = this;
+    const params = swiper.params.navigation;
     e.preventDefault();
     if (swiper.isEnd && !swiper.params.loop) return;
-    swiper.slideNext();
+    if(params.slideView){
+      swiper.slideNextView();
+    }else{
+      swiper.slideNext();
+    }
   },
   init() {
     const swiper = this;
@@ -108,6 +118,7 @@ export default {
       disabledClass: 'swiper-button-disabled',
       hiddenClass: 'swiper-button-hidden',
       lockClass: 'swiper-button-lock',
+      slideView: false,
     },
   },
   create() {
