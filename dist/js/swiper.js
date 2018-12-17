@@ -1,5 +1,5 @@
 /**
- * Swiper 4.4.2
+ * Swiper 4.4.3
  * Most modern mobile touch slider and framework with hardware accelerated transitions
  * http://www.idangero.us/swiper/
  *
@@ -7,7 +7,7 @@
  *
  * Released under the MIT License
  *
- * Released on: December 5, 2018
+ * Released on: December 17, 2018
  */
 
 (function (global, factory) {
@@ -1954,9 +1954,11 @@
     if ( speed === void 0 ) speed = this.params.speed;
     if ( runCallbacks === void 0 ) runCallbacks = true;
 
+
     var swiper = this;
     var slideIndex = index;
     if (slideIndex < 0) { slideIndex = 0; }
+
 
     var params = swiper.params;
     var snapGrid = swiper.snapGrid;
@@ -1975,7 +1977,9 @@
       swiper.emit('beforeSlideChangeStart');
     }
 
+
     var translate = -snapGrid[snapIndex];
+
 
     // Update progress
     swiper.updateProgress(translate);
@@ -1988,6 +1992,8 @@
         }
       }
     }
+
+
     // Directions locks
     if (swiper.initialized && slideIndex !== activeIndex) {
       if (!swiper.allowSlideNext && translate < swiper.translate && translate < swiper.minTranslate()) {
@@ -2085,6 +2091,11 @@
       swiper.loopFix();
       // eslint-disable-next-line
       swiper._clientLeft = swiper.$wrapperEl[0].clientLeft;
+
+
+
+
+
       return swiper.slideTo(swiper.activeIndex + params.slidesPerGroup, speed, runCallbacks, internal);
     }
     return swiper.slideTo(swiper.activeIndex + params.slidesPerGroup, speed, runCallbacks, internal);
@@ -2125,6 +2136,63 @@
       if (prevIndex < 0) { prevIndex = swiper.activeIndex - 1; }
     }
     return swiper.slideTo(prevIndex, speed, runCallbacks, internal);
+  }
+
+  /* eslint no-unused-vars: "off" */
+  function slideNextView (speed, runCallbacks, internal) {
+    if ( speed === void 0 ) speed = this.params.speed;
+    if ( runCallbacks === void 0 ) runCallbacks = true;
+
+    var swiper = this;
+    var params = swiper.params;
+    var animating = swiper.animating;
+    if (params.loop) {
+      if (animating) { return false; }
+      swiper.loopFix();
+      // eslint-disable-next-line
+      swiper._clientLeft = swiper.$wrapperEl[0].clientLeft;
+      return swiper.slideTo(swiper.activeIndex + params.slidesPerView, speed, runCallbacks, internal);
+    }
+    return swiper.slideTo(swiper.activeIndex + params.slidesPerView, speed, runCallbacks, internal);
+  }
+
+  /* eslint no-unused-vars: "off" */
+  function slidePrevView (speed, runCallbacks, internal) {
+    if ( speed === void 0 ) speed = this.params.speed;
+    if ( runCallbacks === void 0 ) runCallbacks = true;
+
+
+    var swiper = this;
+    var params = swiper.params;
+    var animating = swiper.animating;
+    var snapGrid = swiper.snapGrid;
+    var slidesGrid = swiper.slidesGrid;
+    var rtlTranslate = swiper.rtlTranslate;
+
+    if (params.loop) {
+      if (animating) { return false; }
+      swiper.loopFix();
+      // eslint-disable-next-line
+      swiper._clientLeft = swiper.$wrapperEl[0].clientLeft;
+    }
+    var translate = rtlTranslate ? swiper.translate : -swiper.translate;
+    function normalize(val) {
+      if (val < 0) { return -Math.floor(Math.abs(val)); }
+      return Math.floor(val);
+    }
+    var normalizedTranslate = normalize(translate);
+    var normalizedSnapGrid = snapGrid.map(function (val) { return normalize(val); });
+    var normalizedSlidesGrid = slidesGrid.map(function (val) { return normalize(val); });
+
+    var currentSnap = snapGrid[normalizedSnapGrid.indexOf(normalizedTranslate)];
+    var prevSnap = snapGrid[normalizedSnapGrid.indexOf(normalizedTranslate) - 1];
+    var prevIndex;
+    if (typeof prevSnap !== 'undefined') {
+      prevIndex = slidesGrid.indexOf(prevSnap);
+      if (prevIndex < 0) { prevIndex = swiper.activeIndex - 1; }
+    }
+
+    return swiper.slideTo(prevIndex - (params.slidesPerView - 1), speed, runCallbacks, internal);
   }
 
   /* eslint no-unused-vars: "off" */
@@ -2210,6 +2278,8 @@
     slideToLoop: slideToLoop,
     slideNext: slideNext,
     slidePrev: slidePrev,
+    slideNextView: slideNextView,
+    slidePrevView: slidePrevView,
     slideReset: slideReset,
     slideToClosest: slideToClosest,
     slideToClickedSlide: slideToClickedSlide,
@@ -4241,6 +4311,11 @@
   var Keyboard = {
     handle: function handle(event) {
       var swiper = this;
+
+      if (swiper.params.keyboard.onlyOnMouseHover && swiper.$el[0].parentElement.querySelector(':hover') !== swiper.$el[0]) {
+        return;
+      }
+
       var rtl = swiper.rtlTranslate;
       var e = event;
       if (e.originalEvent) { e = e.originalEvent; } // jquery fix
@@ -4289,8 +4364,20 @@
           if (e.preventDefault) { e.preventDefault(); }
           else { e.returnValue = false; }
         }
-        if ((kc === 39 && !rtl) || (kc === 37 && rtl)) { swiper.slideNext(); }
-        if ((kc === 37 && !rtl) || (kc === 39 && rtl)) { swiper.slidePrev(); }
+        if ((kc === 39 && !rtl) || (kc === 37 && rtl)){
+          if(swiper.params.keyboard.slideView){
+            swiper.slideNextView();
+          }else{
+            swiper.slideNext();
+          }
+        }
+        if ((kc === 37 && !rtl) || (kc === 39 && rtl)){
+          if(swiper.params.keyboard.slideView){
+            swiper.slidePrevView();
+          }else{
+            swiper.slidePrev();
+          }
+        }
       } else {
         if (kc === 38 || kc === 40) {
           if (e.preventDefault) { e.preventDefault(); }
@@ -4332,6 +4419,8 @@
           enable: Keyboard.enable.bind(swiper),
           disable: Keyboard.disable.bind(swiper),
           handle: Keyboard.handle.bind(swiper),
+          slideView: true,
+          onlyOnMouseHover: false,
         },
       });
     },
@@ -4381,15 +4470,25 @@
     },
     onPrevClick: function onPrevClick(e) {
       var swiper = this;
+      var params = swiper.params.navigation;
       e.preventDefault();
       if (swiper.isBeginning && !swiper.params.loop) { return; }
-      swiper.slidePrev();
+      if(params.slideView){
+        swiper.slidePrevView();
+      }else{
+        swiper.slidePrev();
+      }
     },
     onNextClick: function onNextClick(e) {
       var swiper = this;
+      var params = swiper.params.navigation;
       e.preventDefault();
       if (swiper.isEnd && !swiper.params.loop) { return; }
-      swiper.slideNext();
+      if(params.slideView){
+        swiper.slideNextView();
+      }else{
+        swiper.slideNext();
+      }
     },
     init: function init() {
       var swiper = this;
@@ -4462,6 +4561,7 @@
         disabledClass: 'swiper-button-disabled',
         hiddenClass: 'swiper-button-hidden',
         lockClass: 'swiper-button-lock',
+        slideView: false,
       },
     },
     create: function create() {
@@ -4522,7 +4622,9 @@
         delay = $activeSlideEl.attr('data-swiper-autoplay') || swiper.params.autoplay.delay;
       }
       swiper.autoplay.timeout = Utils.nextTick(function () {
-        if (swiper.params.autoplay.reverseDirection) {
+        if (swiper.params.autoplay.pauseOnMouseHover && swiper.$el[0].parentElement.querySelector(':hover') === swiper.$el[0]) {
+          swiper.autoplay.run();
+        } else if (swiper.params.autoplay.reverseDirection) {
           if (swiper.params.loop) {
             swiper.loopFix();
             swiper.slidePrev(swiper.params.speed, true, true);
@@ -4538,7 +4640,11 @@
           }
         } else if (swiper.params.loop) {
           swiper.loopFix();
-          swiper.slideNext(swiper.params.speed, true, true);
+          if (swiper.params.autoplay.slideView) {
+            swiper.slideNextView(swiper.params.speed, true, true);
+          } else {
+            swiper.slideNext(swiper.params.speed, true, true);
+          }
           swiper.emit('autoplay');
         } else if (!swiper.isEnd) {
           swiper.slideNext(swiper.params.speed, true, true);
@@ -4599,6 +4705,8 @@
         disableOnInteraction: true,
         stopOnLastSlide: false,
         reverseDirection: false,
+        pauseOnMouseHover: false,
+        slideView: false,
       },
     },
     create: function create() {

@@ -1,5 +1,5 @@
 /**
- * Swiper 4.4.2
+ * Swiper 4.4.3
  * Most modern mobile touch slider and framework with hardware accelerated transitions
  * http://www.idangero.us/swiper/
  *
@@ -7,7 +7,7 @@
  *
  * Released under the MIT License
  *
- * Released on: December 5, 2018
+ * Released on: December 17, 2018
  */
 
 import { $, addClass, removeClass, hasClass, toggleClass, attr, removeAttr, data, transform, transition, on, off, trigger, transitionEnd, outerWidth, outerHeight, offset, css, each, html, text, is, index, eq, append, prepend, next, nextAll, prev, prevAll, parent, parents, closest, find, children, remove, add, styles } from 'dom7/dist/dom7.modular';
@@ -1112,9 +1112,11 @@ var transition$1 = {
 };
 
 function slideTo (index$$1 = 0, speed = this.params.speed, runCallbacks = true, internal) {
+
   const swiper = this;
   let slideIndex = index$$1;
   if (slideIndex < 0) slideIndex = 0;
+
 
   const {
     params, snapGrid, slidesGrid, previousIndex, activeIndex, rtlTranslate: rtl,
@@ -1130,7 +1132,9 @@ function slideTo (index$$1 = 0, speed = this.params.speed, runCallbacks = true, 
     swiper.emit('beforeSlideChangeStart');
   }
 
+
   const translate = -snapGrid[snapIndex];
+
 
   // Update progress
   swiper.updateProgress(translate);
@@ -1143,6 +1147,8 @@ function slideTo (index$$1 = 0, speed = this.params.speed, runCallbacks = true, 
       }
     }
   }
+
+
   // Directions locks
   if (swiper.initialized && slideIndex !== activeIndex) {
     if (!swiper.allowSlideNext && translate < swiper.translate && translate < swiper.minTranslate()) {
@@ -1232,6 +1238,11 @@ function slideNext (speed = this.params.speed, runCallbacks = true, internal) {
     swiper.loopFix();
     // eslint-disable-next-line
     swiper._clientLeft = swiper.$wrapperEl[0].clientLeft;
+
+
+
+
+
     return swiper.slideTo(swiper.activeIndex + params.slidesPerGroup, speed, runCallbacks, internal);
   }
   return swiper.slideTo(swiper.activeIndex + params.slidesPerGroup, speed, runCallbacks, internal);
@@ -1267,6 +1278,54 @@ function slidePrev (speed = this.params.speed, runCallbacks = true, internal) {
     if (prevIndex < 0) prevIndex = swiper.activeIndex - 1;
   }
   return swiper.slideTo(prevIndex, speed, runCallbacks, internal);
+}
+
+/* eslint no-unused-vars: "off" */
+function slideNextView (speed = this.params.speed, runCallbacks = true, internal) {
+  const swiper = this;
+  const { params, animating } = swiper;
+  if (params.loop) {
+    if (animating) return false;
+    swiper.loopFix();
+    // eslint-disable-next-line
+    swiper._clientLeft = swiper.$wrapperEl[0].clientLeft;
+    return swiper.slideTo(swiper.activeIndex + params.slidesPerView, speed, runCallbacks, internal);
+  }
+  return swiper.slideTo(swiper.activeIndex + params.slidesPerView, speed, runCallbacks, internal);
+}
+
+/* eslint no-unused-vars: "off" */
+function slidePrevView (speed = this.params.speed, runCallbacks = true, internal) {
+
+  const swiper = this;
+  const {
+    params, animating, snapGrid, slidesGrid, rtlTranslate,
+  } = swiper;
+
+  if (params.loop) {
+    if (animating) return false;
+    swiper.loopFix();
+    // eslint-disable-next-line
+    swiper._clientLeft = swiper.$wrapperEl[0].clientLeft;
+  }
+  const translate = rtlTranslate ? swiper.translate : -swiper.translate;
+  function normalize(val) {
+    if (val < 0) return -Math.floor(Math.abs(val));
+    return Math.floor(val);
+  }
+  const normalizedTranslate = normalize(translate);
+  const normalizedSnapGrid = snapGrid.map(val => normalize(val));
+  const normalizedSlidesGrid = slidesGrid.map(val => normalize(val));
+
+  const currentSnap = snapGrid[normalizedSnapGrid.indexOf(normalizedTranslate)];
+  const prevSnap = snapGrid[normalizedSnapGrid.indexOf(normalizedTranslate) - 1];
+  let prevIndex;
+  if (typeof prevSnap !== 'undefined') {
+    prevIndex = slidesGrid.indexOf(prevSnap);
+    if (prevIndex < 0) prevIndex = swiper.activeIndex - 1;
+  }
+
+  return swiper.slideTo(prevIndex - (params.slidesPerView - 1), speed, runCallbacks, internal);
 }
 
 /* eslint no-unused-vars: "off" */
@@ -1345,6 +1404,8 @@ var slide = {
   slideToLoop,
   slideNext,
   slidePrev,
+  slideNextView,
+  slidePrevView,
   slideReset,
   slideToClosest,
   slideToClickedSlide,
@@ -3325,6 +3386,11 @@ var Observer$1 = {
 const Keyboard = {
   handle(event) {
     const swiper = this;
+
+    if (swiper.params.keyboard.onlyOnMouseHover && swiper.$el[0].parentElement.querySelector(':hover') !== swiper.$el[0]) {
+      return;
+    }
+
     const { rtlTranslate: rtl } = swiper;
     let e = event;
     if (e.originalEvent) e = e.originalEvent; // jquery fix
@@ -3374,8 +3440,20 @@ const Keyboard = {
         if (e.preventDefault) e.preventDefault();
         else e.returnValue = false;
       }
-      if ((kc === 39 && !rtl) || (kc === 37 && rtl)) swiper.slideNext();
-      if ((kc === 37 && !rtl) || (kc === 39 && rtl)) swiper.slidePrev();
+      if ((kc === 39 && !rtl) || (kc === 37 && rtl)){
+        if(swiper.params.keyboard.slideView){
+          swiper.slideNextView();
+        }else{
+          swiper.slideNext();
+        }
+      }
+      if ((kc === 37 && !rtl) || (kc === 39 && rtl)){
+        if(swiper.params.keyboard.slideView){
+          swiper.slidePrevView();
+        }else{
+          swiper.slidePrev();
+        }
+      }
     } else {
       if (kc === 38 || kc === 40) {
         if (e.preventDefault) e.preventDefault();
@@ -3417,6 +3495,8 @@ var keyboard = {
         enable: Keyboard.enable.bind(swiper),
         disable: Keyboard.disable.bind(swiper),
         handle: Keyboard.handle.bind(swiper),
+        slideView: true,
+        onlyOnMouseHover: false,
       },
     });
   },
@@ -3464,15 +3544,25 @@ const Navigation = {
   },
   onPrevClick(e) {
     const swiper = this;
+    const params = swiper.params.navigation;
     e.preventDefault();
     if (swiper.isBeginning && !swiper.params.loop) return;
-    swiper.slidePrev();
+    if(params.slideView){
+      swiper.slidePrevView();
+    }else{
+      swiper.slidePrev();
+    }
   },
   onNextClick(e) {
     const swiper = this;
+    const params = swiper.params.navigation;
     e.preventDefault();
     if (swiper.isEnd && !swiper.params.loop) return;
-    swiper.slideNext();
+    if(params.slideView){
+      swiper.slideNextView();
+    }else{
+      swiper.slideNext();
+    }
   },
   init() {
     const swiper = this;
@@ -3543,6 +3633,7 @@ var navigation = {
       disabledClass: 'swiper-button-disabled',
       hiddenClass: 'swiper-button-hidden',
       lockClass: 'swiper-button-lock',
+      slideView: false,
     },
   },
   create() {
@@ -3601,7 +3692,9 @@ const Autoplay = {
       delay = $activeSlideEl.attr('data-swiper-autoplay') || swiper.params.autoplay.delay;
     }
     swiper.autoplay.timeout = Utils.nextTick(() => {
-      if (swiper.params.autoplay.reverseDirection) {
+      if (swiper.params.autoplay.pauseOnMouseHover && swiper.$el[0].parentElement.querySelector(':hover') === swiper.$el[0]) {
+        swiper.autoplay.run();
+      } else if (swiper.params.autoplay.reverseDirection) {
         if (swiper.params.loop) {
           swiper.loopFix();
           swiper.slidePrev(swiper.params.speed, true, true);
@@ -3617,7 +3710,11 @@ const Autoplay = {
         }
       } else if (swiper.params.loop) {
         swiper.loopFix();
-        swiper.slideNext(swiper.params.speed, true, true);
+        if (swiper.params.autoplay.slideView) {
+          swiper.slideNextView(swiper.params.speed, true, true);
+        } else {
+          swiper.slideNext(swiper.params.speed, true, true);
+        }
         swiper.emit('autoplay');
       } else if (!swiper.isEnd) {
         swiper.slideNext(swiper.params.speed, true, true);
@@ -3678,6 +3775,8 @@ var autoplay = {
       disableOnInteraction: true,
       stopOnLastSlide: false,
       reverseDirection: false,
+      pauseOnMouseHover: false,
+      slideView: false,
     },
   },
   create() {
