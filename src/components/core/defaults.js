@@ -36,6 +36,7 @@ export default {
   // Breakpoints
   breakpoints: undefined,
   breakpointsInverse: false,
+  breakpointsReferenceCallback: null, // callback to replace the default window.innerWidth computation
 
   // Slides grid
   spaceBetween: 0,

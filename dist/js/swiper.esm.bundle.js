@@ -1,13 +1,13 @@
 /**
- * Swiper 4.4.3
+ * Swiper 4.6.0
  * Most modern mobile touch slider and framework with hardware accelerated transitions
  * http://www.idangero.us/swiper/
  *
- * Copyright 2014-2018 Vladimir Kharlampidi
+ * Copyright 2014-2019 Vladimir Kharlampidi
  *
  * Released under the MIT License
  *
- * Released on: December 17, 2018
+ * Released on: January 3, 2019
  */
 
 import { $, addClass, removeClass, hasClass, toggleClass, attr, removeAttr, data, transform, transition, on, off, trigger, transitionEnd, outerWidth, outerHeight, offset, css, each, html, text, is, index, eq, append, prepend, next, nextAll, prev, prevAll, parent, parents, closest, find, children, remove, add, styles } from 'dom7/dist/dom7.modular';
@@ -2509,17 +2509,24 @@ function getBreakpoint (breakpoints) {
   if (!breakpoints) return undefined;
   let breakpoint = false;
   const points = [];
-  Object.keys(breakpoints).forEach((point) => {
-    points.push(point);
-  });
+  Object.keys(breakpoints)
+    .forEach((point) => {
+      points.push(point);
+    });
   points.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
   for (let i = 0; i < points.length; i += 1) {
     const point = points[i];
+
+    let innerWidth = window.innerWidth;
+    if (typeof swiper.params.breakpointsReferenceCallback === 'function') {
+      innerWidth = swiper.params.breakpointsReferenceCallback();
+    }
+
     if (swiper.params.breakpointsInverse) {
-      if (point <= window.innerWidth) {
+      if (point <= innerWidth) {
         breakpoint = point;
       }
-    } else if (point >= window.innerWidth && !breakpoint) {
+    } else if (point >= innerWidth && !breakpoint) {
       breakpoint = point;
     }
   }
@@ -2706,6 +2713,7 @@ var defaults = {
   // Breakpoints
   breakpoints: undefined,
   breakpointsInverse: false,
+  breakpointsReferenceCallback: null, // callback to replace the default window.innerWidth computation
 
   // Slides grid
   spaceBetween: 0,
